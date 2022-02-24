@@ -1,2 +1,2 @@
-# Duck-ECE551
+# Duke-ECE551
 ECE551 All of programming
