@@ -1,44 +1,43 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
 
-struct _retire_info {
-  int months;
-  double contribution;
-  double rate_of_return;
+struct _retire_info{
+	int months;
+	double contribution;
+	double rate_of_return;
 };
 
 typedef struct _retire_info retire_info;
 
-void helperF(int startAge, double balance) {
-  int yearsOld = startAge / 12;
-  int monthsOld = startAge % 12;
-  printf("Age %3d month %2d you have $%.2lf\n", yearsOld, monthsOld, balance);
+void retirement(int startAge, double initial, retire_info working, retire_info retired){
+//retirement(in months, initial savings in dollars, info about working, info about being retired)
+	int Age;
+	int moonth;
+	for(int i=1; i<=working.months; i++){
+		Age = startAge/12;
+		moonth = startAge%12;
+		printf("While working: Age %3d moonth %2d you have $%.2lf\n", Age, moonth, initial);
+		initial += (initial*working.rate_of_return + working.contribution);
+		//printf("working.rate_of_return:%lf\n", working.rate_of_return);
+		//printf("working.contribution:%lf\n",working.contribution);
+		//printf("initial:%.2lf\n", initial);
+		startAge++;
+	}
+	//double balance = initial;
+	for(int j=1; j<=retired.months; j++){
+		Age = startAge/12;
+		moonth = startAge%12;
+		printf("After retiring: Age %3d moonth %2d you have $%.2lf\n",Age, moonth, initial);
+		initial += (initial*retired.rate_of_return + retired.contribution);
+		startAge++;
+	}
 }
 
-void retirement(int startAge, double initial, retire_info working, retire_info retired) {
-  double balance = initial;
-  for (int i = 0; i < working.months; i++) {
-    helperF(startAge, balance);
-    startAge++;
-    balance += balance * working.rate_of_return + working.contribution;
-  }
-
-  for (int i = 0; i < retired.months; i++) {
-    helperF(startAge, balance);
-    startAge++;
-    balance += balance * retired.rate_of_return + retired.contribution;
-  }
-}
-
-int main(void) {
-  retire_info working;
-  working.months = 489;
-  working.contribution = 1000;
-  working.rate_of_return = 0.045 / 12;
-  retire_info retired;
-  retired.months = 384;
-  retired.contribution = -4000;
-  retired.rate_of_return = 0.01 / 12;
-  retirement(327, 21345, working, retired);
-  return EXIT_SUCCESS;
+int main(){
+	retire_info Working = {489, 1000, 0.045/12};
+	retire_info Retired = {384, -4000, 0.01/12};
+	int startAge = 327;
+	int initial = 21345;
+	retirement(startAge, initial, Working, Retired);
+	return 0;
 }
