@@ -1,6 +1,8 @@
 #include <stdio.h>
 
-void printHex(unsigned x, char buffer[], int acc){
+char buffer2[30]={'\0'};
+
+void printHex(unsigned x, char buffer[], int acc){//This is tail-recursion.
 	unsigned mod;
 	mod=x%16;
 	if(mod<=9){
@@ -35,13 +37,40 @@ void printHex(unsigned x, char buffer[], int acc){
 	printHex(x, buffer, acc+1);
 }
 
+char * printHex2(int x){//This is normal recursion.
+	static int i = 0;
+	if(x<16){
+		if(x<10){
+			buffer2[i]=x+'0';
+		}
+		else{
+			buffer2[i]=x-10+'A';
+		}
+	}
+	else{
+		printHex2(x/16);
+		i++;
+		x%=16;
+		if(x<10){
+			buffer2[i]=x+'0';
+		}
+		else{
+			buffer2[i]=x-10+'A';
+		}
+	}
+	return buffer2;	
+}
+
 int main(){
-	char buffer[30];
+	char buffer[30]={'\0'};
+	char * ans_str;
 	unsigned x;
 	printf("Enter an unsigned int:\n");
 	scanf("%d", &x);
-	printf("The hexadecimal format of %d is:",x);
+	printf("The hexadecimal format of %d from printHex is:",x);
 	printHex(x,buffer,0);
 	printf("\n");
+	ans_str=printHex2(x);
+	printf("The hexadecimal format of %d from printHex2 is: %s\n",x,ans_str);
 	return 0;
 }
