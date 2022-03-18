@@ -1,8 +1,8 @@
 #include <stdio.h>
 
 unsigned power(unsigned x, unsigned y, unsigned acc){
-	if(x==0){
-		return 0;
+	if(x==0){//while 0 to the 0 is undefined, we specify the result should be 1 for this function.
+		return acc;
 	}
 	else if(y==0){
 		return acc;
