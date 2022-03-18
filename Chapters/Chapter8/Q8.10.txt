@@ -1,0 +1,7 @@
+//f(&x,y)-{*a=7,b=8}-g(7,&b)-{x=8,*y=0,b=0,y=&x}-
+//Answer:
+//In f, *a = 3, b = 4
+//In g, x = 7, *y = 8
+//Back in f, *a = 7, b = 0
+//In main: x = 7, y = 4
+//
