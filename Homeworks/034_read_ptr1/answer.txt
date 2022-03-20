@@ -1,0 +1,14 @@
+*p = 5
+Now *p = 16
+// p(anArray[1])
+// q=&anArray[3](*q=99)
+// x=&q
+// **x=anArray[3]=12
+// *x=p-->means let q point to p,so q is point to anArray[1](p) at this time. 
+// **x = anArray[1] = 42
+// q[1]=anArray[1][1]=anArray[2]=9
+anArray[0] = 5
+anArray[1] = 42
+anArray[2] = 33//9
+anArray[3] = 12
+
