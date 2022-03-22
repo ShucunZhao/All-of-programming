@@ -1,12 +1,11 @@
 #include <stdio.h>
 
 int myatoi(const char * str){
-	_Bool flag;
+	_Bool flag=1;
 	while(*str==' '){
 		str++;
 	}
 	if(*str=='+'){
-		flag = 1;
 		str++;
 	}
 	if(*str=='-'){
@@ -20,9 +19,6 @@ int myatoi(const char * str){
 	while(*str>='0'&&*str<='9'&&*str!='\0'){
 		i=i*10+*str-'0';
 		str++;
-	}
-	if(flag){
-		printf("+");
 	}
 	if(!flag){
 		printf("-");
