@@ -33,6 +33,10 @@ int mytoiHex(const char * str){
 			continue;
 		}
 		if((*str-'A')<=5){
+			if(*str==' '){
+				str++;
+				continue;
+			}
 			i = *str-'A'+10;
 			filter[n]=i;
 			//decimal=decimal+deciaml*k+i
