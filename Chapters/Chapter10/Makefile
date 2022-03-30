@@ -1,2 +1,2 @@
-q10.8: Q10.8.c
-	gcc -g -o q10.8 -pedantic -std=gnu99 -Wall -Werror Q10.8.c
+q10.9: Q10.9.c
+	gcc -g -o q10.9 -pedantic -std=gnu99 -Wall -Werror Q10.9.c
