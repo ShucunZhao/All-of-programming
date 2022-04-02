@@ -16,7 +16,9 @@ int main(int argc, char ** argv){
 					printf("%c",c);
 				}
 			}
-			fclose(f);
+			if(fclose(f)!=0){
+				printf("file %s couldn't close.\n", argv[i]);
+			}
 		}
 	}
 	else{

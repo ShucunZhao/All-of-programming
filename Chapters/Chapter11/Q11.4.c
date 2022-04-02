@@ -29,7 +29,9 @@ int main(int argc, char ** argv){
 				printf("The number of output line is: %d\n", n);
 			}
 			n=0;
-			fclose(f);
+			if(fclose(f)!=0){
+				printf("file %s couldn't close.\n", argv[i]);
+			}
 		}
 	}
 	else{
