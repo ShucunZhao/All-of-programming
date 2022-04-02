@@ -17,6 +17,16 @@ int main(int argc, char ** argv){
 	char * folder = argv[argc-1];
 	char file[30];
 	for(int i=1;i<argc-1;i++){
+		if(stat(argv[i], &st)==0){
+			if(!(S_IFREG & st.st_mode)){
+				printf("The No.%d argument %s is not a file.\n", i, argv[i]);
+				return EXIT_FAILURE;
+			}
+		}
+		else{
+			printf("Stat error.\n");
+			return EXIT_FAILURE;
+		}	
 		sprintf(file,"%s/%s", folder,argv[i]);
 		FILE * f1 = fopen(argv[i], "r");
 		FILE * f2 = fopen(file, "w+");
