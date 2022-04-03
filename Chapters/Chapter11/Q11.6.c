@@ -16,6 +16,7 @@ int main(int argc, char ** argv){
 	}
 	char * folder = argv[argc-1];
 	char file[30];
+	//char * file=NULL;
 	for(int i=1;i<argc-1;i++){
 		if(stat(argv[i], &st)==0){
 			if(!(S_IFREG & st.st_mode)){
