@@ -1,0 +1,118 @@
+" A example for .vimrc
+" To use it, copy it to
+"     for centOS:  ~root/.vimrc
+
+"1.Coding format setting:
+set encoding=utf-8 "Cache file
+set fileencodings=utf-8,gbk,gb2312,gb18030,ucs-bom,latin1,cp936 "Set input file format(include Chinese)
+set termencoding=utf-8 "Set output file format
+
+"2.Indentation(Tap) setting:
+set tabstop=4 "Set tap length to 4(same as set ts)
+set shiftwidth=4 "Set auto indent length to 4
+set cindent "Set C/Java indent format
+set smartindent "Speacial treat to special symbol
+set autoindent "Set autoindenting on
+
+"3.Mouse setting:"
+set mouse=a "Open the mouse(vim is only keyboard function by default)
+
+"4.Paste setting"(These two lines can keep the indent format when pasting)
+"set paste(Don't open this here! Because it will disable all the indent form setting)
+set listchars=tab:>-,trail:- "Show the tap and space when choose the content.
+
+"5.Backup setting:
+set nobackup "Close the backup function	
+
+"6.Searching setting:
+set incsearch "When you enter /+"thing to search" can search the conent from top to bottom
+
+"7.Others setting:"
+set vb t_vb= "Close the error hint sound"
+set nocompatible "Close the compatible with vi(prevent bug occur)
+set backspace=indent,eol,start "If not set this, y can only delete the new added characters and the existing one cannot be deleted.
+set history=50 "Keep 50 lines of command line history
+
+"8.Showing setting:"
+syntax on "Set syntax highlight(same as syntax enable)
+colorscheme desert "Set the color scheme to desert
+set nu "Show the line number(same as set number)
+set ruler "Show the cursor position all the time
+set background=dark "Set background to dark
+set showcmd "Display current entered command at the bottom
+set go= "Hide the graphics button 
+set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}   "状态行显示的内容  
+set laststatus=1    " 启动显示状态行(1),总是显示状态行(2)  
+set foldenable      " 允许折叠  
+set foldmethod=manual   " 手动折叠 
+
+""""""""""""""""""""""""""""""""""""""
+"KeyBoard mapping setting:"
+nmap <leader>w :w!<cr>
+nmap <leader>f :find<cr>
+" 映射全选+复制 ctrl+a
+map <C-A> ggVGY
+map! <C-A> <Esc>ggVGY
+map <F12> gg=G
+" 选中状态下 Ctrl+c 复制
+vmap <C-c> "+y
+
+"GDB debugging setting:" 
+map <Space> :call gdb("")<cr>
+"Conflicting key changging:(Core step! or your gdb key would confict!)
+"In normal/visual mode: Set the s to j(which is move-down) then would release the confict with s(step) in gdb debugging."
+nnoremap s j
+
+"比较文件  
+"nnoremap <C-F2> :vert diffsplit 
+"新建标签  
+"map <M-F2> :tabnew<CR>  
+"列出当前目录文件  
+"map <F3> :tabnew .<CR>  
+"打开树状文件目录  
+"map <C-F3> \be
+
+""""""""""""""""""""""""
+filetype plugin indent on 
+"打开文件类型检测, 加了这句才可以用智能补全
+set completeopt=longest,menu
+
+"新建.c,.h,.sh,.java文件，自动插入文件头 
+autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java exec ":call SetTitle()" 
+""定义函数SetTitle，自动插入文件头 
+func SetTitle() 
+	"如果文件类型为.sh文件 
+	if &filetype == 'sh' 
+		call setline(1,"\#########################################################################") 
+		call append(line("."), "\# File Name: ".expand("%")) 
+		call append(line(".")+1, "\# Author: ShucunZhao") 
+		call append(line(".")+2, "\# Mail: zhaoshucun@neworldkey.com") 
+		call append(line(".")+3, "\# Created Time: ".strftime("%c")) 
+		call append(line(".")+4, "\#########################################################################") 
+		call append(line(".")+5, "\#!/bin/bash") 
+		call append(line(".")+6, "") 
+	else 
+		call setline(1, "/*************************************************************************") 
+		call append(line("."), "	> File Name: ".expand("%")) 
+		call append(line(".")+1, "	> Author: ShucunZhao") 
+		call append(line(".")+2, "	> Mail: zhaoshucun@neworldkey.com") 
+		call append(line(".")+3, "	> Created Time: ".strftime("%c")) 
+		call append(line(".")+4, " ************************************************************************/") 
+		call append(line(".")+5, "")
+	endif
+	if &filetype == 'cpp'
+		call append(line(".")+6, "#include<iostream>")
+		call append(line(".")+7, "using namespace std;")
+		call append(line(".")+8, "")
+	endif
+	if &filetype == 'c'
+		call append(line(".")+6, "#include<stdio.h>")
+		call append(line(".")+7, "")
+	endif
+	"	if &filetype == 'java'
+	"		call append(line(".")+6,"public class ".expand("%"))
+	"		call append(line(".")+7,"")
+	"	endif
+	"新建文件后，自动定位到文件末尾
+	autocmd BufNewFile * normal G
+endfunc 
