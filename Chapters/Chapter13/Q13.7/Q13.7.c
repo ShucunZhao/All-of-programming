@@ -4,6 +4,9 @@
 * 2.Generate the unique	course name.
 * 3.Count the student info of each class.
 * 4.Write the output file which should insert .roster to the file name.
+* Difference:
+* Each student's info is terminated by blank line instead of having a 
+* count of how many classes.
 */
 
 #include <stdio.h>
