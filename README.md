@@ -1,4 +1,3 @@
-# Duke-ECE551
-## ECE551 All of programming
+# All of programming(dukeECE551)
 ## Folder chapter is for tasks from book and hw is for homework.
-### Added a new user of Tenxun ECS, CentOS7.6.
+### System: Tenxun-ECS, CentOS7.6.

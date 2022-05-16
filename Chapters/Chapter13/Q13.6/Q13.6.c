@@ -11,7 +11,7 @@
 #include <string.h>
 #include <ctype.h>
 
-/*
+:/*
  * These two struct are used for extract the info from input file,
  * store them into a struct which can count the num of element 
  * and save the info correspond to each
