@@ -1,5 +1,5 @@
-/* Description: Read two command line arguments and use the second 
- * one's words to fill the first one '_' location randomly.
+/* Description: Read two command line arguments and use the words
+ * from second one to fill the '_' of first one randomly.
  * Solution:
  * 1.Read the words file to save into string set(struct).
  * 2.Traverse the story string and find the each '_' location.
@@ -99,46 +99,50 @@ void writeStory(char * filename, wordSet_t * wordSet){
 	storySet->storyLine = (char**)malloc(storySet->lineNum*sizeof(char*));
 	char * sep = "_";
 	for(size_t j=0;j<i;j++){
-		//char * token = strtok(lines[j], sep);
-		//char * token = strsep(&lines2[j], sep);
-		/*if(strchr(lines2[j], '_')!=NULL){
-			//char * sep = "_";
-			char * newStr = NULL;//
+		if(strchr(lines2[j], '_')!=NULL){
+			char * newLines = lines2[j];//Key step1: You must copy the line to a new variable because the
+										//strsep() function would make it be NULL at last, which will cause
+										//the getline() function couldn't free the line to make the leak of 
+										//memory.
+			char * newStr = NULL;
 			char * fill = NULL;
-			size_t lenNew = 0;
+			size_t lenNew = strlen(newLines);
 			size_t lenTok;
 			size_t lenFill;
-			char * token = strsep(&lines2[j], sep);
+			char * token = strsep(&newLines, sep);
+			int flag = 1;//The flag to determine if the first time to realloc memory for initialization.
 			while(token[strlen(token)-1]!='\n'){
 				lenTok = strlen(token);
 				fill = randomWord(wordSet);
 				lenFill = strlen(fill);
 				newStr = (char*)realloc(newStr, (lenNew+lenTok+lenFill+1)*sizeof(char));
+				if(flag){//Key step2: You must inital the pointer if there is the first time to create 
+						//because the strcat() function is start with the founded '\0', and the first
+						//created memory addresses are assigned random.
+					newStr[0]='\0';
+					flag=0;
+				}
 				strcat(newStr, token);
 				strcat(newStr, fill);
 				lenNew = strlen(newStr);
-				token = strsep(&lines2[j], sep);
+				token = strsep(&newLines, sep);
 			}
 			lenNew = strlen(newStr);
 			lenTok = strlen(token);
 			newStr = (char*)realloc(newStr, (lenNew+lenTok+1)*sizeof(char));
 			strcat(newStr, token);
 			storySet->storyLine[j] = newStr;
+			//fprintf(stdout, "%s", storySet->storyLine[j]);
+			//free(storySet->storyLine[j]);
 			free(lines2[j]);
 		}
 		else{
 			storySet->storyLine[j] = lines2[j];
-		}*/
-		char * token = strsep(&lines2[j], sep);
-		size_t lenTok = strlen(token);
-		char * fill = randomWord(wordSet);
-		size_t lenFill = strlen(fill);
-		char * newStr = (char*)malloc((lenTok+lenFill+1)*sizeof(char));
-		strcat(newStr, token);
-		storySet->storyLine[j] = newStr;
+			//fprintf(stdout, "%s", storySet->storyLine[j]);
+			//free(storySet->storyLine[j]);
+		}
 	}
-	//free(lines2);
-	//Free the storySet related memory.
+	//Printf the story lines and free the memory.
 	printf("story:\n");
 	for(size_t k=0; k<storySet->lineNum;k++){
 		fprintf(stdout, "%s", storySet->storyLine[k]);
@@ -148,13 +152,12 @@ void writeStory(char * filename, wordSet_t * wordSet){
 	free(storySet->storyLine);
 	free(storySet);
 	free(lines2);
+
 	while(fclose(f)!=0){
 		fprintf(stderr, "File %s failed to close!\n", filename);
 		exit(EXIT_FAILURE);
 	}
 }
-
-//void writeOutput(){}
 
 void freeMem(wordSet_t * wordSet){
 	//Free the wordSet related memory.
