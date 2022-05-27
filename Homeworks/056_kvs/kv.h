@@ -1,3 +1,6 @@
+#ifndef __KV_H__
+#define __KV_H__
+
 typedef struct kvpair_tag{
 	char * key;
 	char * value;
@@ -17,3 +20,5 @@ typedef struct uniqSet_tag{
 	size_t num;
 	count_t ** countSet;
 }uniqSet_t;
+
+#endif
