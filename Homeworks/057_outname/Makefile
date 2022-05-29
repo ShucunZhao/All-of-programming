@@ -1,4 +1,12 @@
-#outname: outname.c
-#	gcc -g -o outname -pedantic -std=gnu99 -Wall -Werror outname.c
-outname_test: outname_test.c
-#	gcc -g -o outname_test -pedantic -std=gnu99 -Wall -Werror outname_test.c
+CFLAGS=-Wall -Werror -std=gnu99 -pedantic -ggdb3
+OBJS=outname.o outname_test.o
+PROGRAM=outname_test
+
+$(PROGRAM): $(OBJS)
+	gcc $(CFLAGS) -o $@ $(OBJS)
+
+%.o: %.c 
+	gcc -c $(CFLAGS) $<
+
+clean:
+	rm -rf $(OBJS) $(PROGRAM) *~ 

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "outname.h"
 
 char * computeOutputFileName(const char * inputName){
 	char * suffix = ".counts";
@@ -10,7 +11,7 @@ char * computeOutputFileName(const char * inputName){
 	strcat(OutputName,suffix);
 	return OutputName;
 }
-
+/*
 int main(int argc, char ** argv){
 	if(argc!=2){	
 		fprintf(stderr, "Input command line arguments are invalid!\n");
@@ -30,3 +31,4 @@ int main(int argc, char ** argv){
 	free(OutputName);
 	return EXIT_SUCCESS;
 }
+*/
