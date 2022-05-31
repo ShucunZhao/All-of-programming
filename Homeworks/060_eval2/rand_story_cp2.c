@@ -25,11 +25,7 @@ void readWord(char * filename){
 	//Preparation of separation from ':':
 	char * sep2 = ":";
 	char * token2 = NULL;
-	//char * New2 = NULL;
-	char * sub2 = NULL;
 	char * checkline2 = NULL;
-	//size_t = strlen(lenTok2);
-	//size_t = strlen(lenNew2);
 	int check2;//check if repeated element.
 	//Parsing the input words:
 	char ** lines2 = NULL;
@@ -54,22 +50,20 @@ void readWord(char * filename){
 				exit(EXIT_FAILURE);
 			}
 		}
-		//Store the cats:
-		sub2 = lines2[i]; 
-		token2 = strsep(&sub2, sep2);
+		//Store the cats: 
+		token2 = strsep(&lines2[i], sep2);
 		//Traverse the crrent set to find the same element:
 		for(size_t j=0;j<cats->num;j++){
 			if(strcmp(token2, cats->category[j]->tag)==0){
 				cats->category[j]->num++;
 				cats->category[j]->values = (char**)realloc(cats->category[j]->values, cats->category[j]->num*sizeof(char*));
-				cats->category[j]->values[cats->category[j]->num-1] = sub2;
+				cats->category[j]->values[cats->category[j]->num-1] = lines2[i];
 				check2 = 1;
 				break;
 			}
 		}
 		if(check2){
 			token2 = NULL;
-			sub2 = NULL;
 			cur2 = NULL;
 			i++;
 	//		free(lines2[i]);
@@ -81,24 +75,23 @@ void readWord(char * filename){
 		cats->category[cats->num-1]->num = 1;
 		cats->category[cats->num-1]->tag = token2;
 		cats->category[cats->num-1]->values = (char**)malloc(cats->category[cats->num-1]->num*sizeof(char*));
-		cats->category[cats->num-1]->values[cats->category[cats->num-1]->num-1] = sub2;
+		cats->category[cats->num-1]->values[cats->category[cats->num-1]->num-1] = lines2[i];
 		token2 = NULL;
-		sub2 = NULL;
 		cur2 = NULL;
 		i++;
 		//free(token2);
 		//free(lines2[i]);
 	}
-	free(cur2);
 	//Verification:
 	for(size_t k=0;k<cats->num;k++){
 		fprintf(stdout, "%s:\n", cats->category[k]->tag);
-	//	free(cats->category[k]->tag);
+		//free(cats->category[k]->tag);
 		for(size_t l=0;l<cats->category[k]->num;l++){
 			fprintf(stdout,"  %s\n", cats->category[k]->values[l]);
 			//free(cats->category[k]->values[l]);
 		}
 		free(cats->category[k]->values);
+		free(cats->category[k]->tag);
 		free(cats->category[k]);
 	}
 	free(cats->category);
@@ -129,7 +122,7 @@ void readStory(char * filename){
 	char * sep = "_";
 	char * token = NULL;
 	char * New = NULL;
-	//char * sub = NULL;//Store the substitute of lines
+	char * sub = NULL;//Store the substitute of lines
 	char * checkline = NULL;//Check the numer of "_"
 	const char * fill = NULL;
 	size_t lenTok;
@@ -145,7 +138,7 @@ void readStory(char * filename){
 	while(getline(&cur, &linecap, f)>=0){
 		lines = (char**)realloc(lines, (i+1)*sizeof(char*));
 		lines[i] = cur;
-		char * sub = lines[i];//Key setp: U must define a substitute of lines[i] cause the strsep() 
+		sub = lines[i];//Key setp: U must define a substitute of lines[i] cause the strsep() 
 							//function will change the origin address of line[i] that will lead 
 							//the free(lines[i]) to fail(free the new address and lost the origin one.)
 		checkline = strchr(lines[i],'_');
@@ -206,7 +199,7 @@ void readStory(char * filename){
 		exit(EXIT_FAILURE);
 	}
 }
-/*
+
 int main(int argc, char ** argv){
 	if(argc!=2){
 		fprintf(stderr, "Input command line arguments are invalid!\n");
@@ -215,4 +208,3 @@ int main(int argc, char ** argv){
 	//readStory(argv[1]);
 	readWord(argv[1]);
 }
-*/

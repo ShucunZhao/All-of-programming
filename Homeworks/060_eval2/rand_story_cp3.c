@@ -55,7 +55,10 @@ void readWord(char * filename){
 			}
 		}
 		//Store the cats:
-		sub2 = lines2[i]; 
+		sub2 = (char*)realloc(sub2, (strlen(lines2[i])+1)*sizeof(char));
+		memset(sub2,'\0',strlen(lines2[i])+1);
+		strncpy(sub2, lines2[i], strlen(lines2[i])+1);
+		free(lines2[i]);
 		token2 = strsep(&sub2, sep2);
 		//Traverse the crrent set to find the same element:
 		for(size_t j=0;j<cats->num;j++){
@@ -72,7 +75,7 @@ void readWord(char * filename){
 			sub2 = NULL;
 			cur2 = NULL;
 			i++;
-	//		free(lines2[i]);
+			//free(lines2[i]);
 			continue;
 		}
 		cats->num++;
@@ -87,23 +90,24 @@ void readWord(char * filename){
 		cur2 = NULL;
 		i++;
 		//free(token2);
-		//free(lines2[i]);
+	//	free(lines2[i]);
 	}
 	free(cur2);
+	free(lines2);
 	//Verification:
 	for(size_t k=0;k<cats->num;k++){
 		fprintf(stdout, "%s:\n", cats->category[k]->tag);
 	//	free(cats->category[k]->tag);
 		for(size_t l=0;l<cats->category[k]->num;l++){
 			fprintf(stdout,"  %s\n", cats->category[k]->values[l]);
-			//free(cats->category[k]->values[l]);
+		//	free(cats->category[k]->values[l]);
 		}
 		free(cats->category[k]->values);
 		free(cats->category[k]);
 	}
 	free(cats->category);
 	free(cats);
-	free(lines2);
+	free(sub2);
 	/*
 	free(cats->category);
 	for(size_t m=0;m<i;m++){
@@ -129,7 +133,7 @@ void readStory(char * filename){
 	char * sep = "_";
 	char * token = NULL;
 	char * New = NULL;
-	//char * sub = NULL;//Store the substitute of lines
+	char * sub = NULL;//Store the substitute of lines
 	char * checkline = NULL;//Check the numer of "_"
 	const char * fill = NULL;
 	size_t lenTok;
@@ -145,7 +149,7 @@ void readStory(char * filename){
 	while(getline(&cur, &linecap, f)>=0){
 		lines = (char**)realloc(lines, (i+1)*sizeof(char*));
 		lines[i] = cur;
-		char * sub = lines[i];//Key setp: U must define a substitute of lines[i] cause the strsep() 
+		sub = lines[i];//Key setp: U must define a substitute of lines[i] cause the strsep() 
 							//function will change the origin address of line[i] that will lead 
 							//the free(lines[i]) to fail(free the new address and lost the origin one.)
 		checkline = strchr(lines[i],'_');
@@ -206,7 +210,7 @@ void readStory(char * filename){
 		exit(EXIT_FAILURE);
 	}
 }
-/*
+
 int main(int argc, char ** argv){
 	if(argc!=2){
 		fprintf(stderr, "Input command line arguments are invalid!\n");
@@ -215,4 +219,3 @@ int main(int argc, char ** argv){
 	//readStory(argv[1]);
 	readWord(argv[1]);
 }
-*/
