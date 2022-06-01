@@ -11,8 +11,8 @@ void stripNewline(char * str){
 	}
 }
 
-//catarray_t * readWord(char * filename){
-void readWord(char * filename){
+catarray_t * readWord(char * filename){
+//void readWord(char * filename){
 	FILE * f = fopen(filename, "r");
 	if(f==NULL){
 		fprintf(stderr, "File %s is invalid!\n", filename);
@@ -25,11 +25,8 @@ void readWord(char * filename){
 	//Preparation of separation from ':':
 	char * sep2 = ":";
 	char * token2 = NULL;
-	//char * New2 = NULL;
-	char * sub2 = NULL;
+	char * sub2 = NULL;//Key setp:Same effect as sub in func readStory
 	char * checkline2 = NULL;
-	//size_t = strlen(lenTok2);
-	//size_t = strlen(lenNew2);
 	int check2;//check if repeated element.
 	//Parsing the input words:
 	char ** lines2 = NULL;
@@ -62,61 +59,70 @@ void readWord(char * filename){
 			if(strcmp(token2, cats->category[j]->tag)==0){
 				cats->category[j]->num++;
 				cats->category[j]->values = (char**)realloc(cats->category[j]->values, cats->category[j]->num*sizeof(char*));
-				cats->category[j]->values[cats->category[j]->num-1] = sub2;
+				//Key Step: the values must malloc the memory to save, if you just make it point to 
+				//sub2 that will lead to cannot free the lines2[i].
+				cats->category[j]->values[cats->category[j]->num-1] = (char*)malloc((strlen(sub2)+1)*sizeof(char));
+				memset(cats->category[j]->values[cats->category[j]->num-1],'\0',strlen(sub2)+1);
+				strncpy(cats->category[j]->values[cats->category[j]->num-1], sub2, strlen(sub2)+1);
 				check2 = 1;
 				break;
 			}
 		}
 		if(check2){
+			cur2 = NULL;
+			free(lines2[i]);
+			i++;
+			//free(lines2[i]);
+			//Reset the variables:
 			token2 = NULL;
 			sub2 = NULL;
-			cur2 = NULL;
-			i++;
-	//		free(lines2[i]);
 			continue;
 		}
 		cats->num++;
 		cats->category = (category_t**)realloc(cats->category, cats->num*sizeof(category_t*));
 		cats->category[cats->num-1] = (category_t*)malloc(sizeof(category_t));
 		cats->category[cats->num-1]->num = 1;
-		cats->category[cats->num-1]->tag = token2;
+		//Key Step: the tag and values must malloc the memory to save, if you just make it point to 
+		//the token2 or sub2 that will lead to cannot free the lines2[i].
+		cats->category[cats->num-1]->tag = (char*)malloc((strlen(token2)+1)*sizeof(char));
+		memset(cats->category[cats->num-1]->tag,'\0',strlen(token2)+1);
+		strncpy(cats->category[cats->num-1]->tag, token2, strlen(token2)+1);
 		cats->category[cats->num-1]->values = (char**)malloc(cats->category[cats->num-1]->num*sizeof(char*));
-		cats->category[cats->num-1]->values[cats->category[cats->num-1]->num-1] = sub2;
+		cats->category[cats->num-1]->values[cats->category[cats->num-1]->num-1] = (char*)malloc((strlen(sub2)+1)*sizeof(char));
+		memset(cats->category[cats->num-1]->values[cats->category[cats->num-1]->num-1],'\0',strlen(sub2)+1);
+		strncpy(cats->category[cats->num-1]->values[cats->category[cats->num-1]->num-1], sub2, strlen(sub2)+1);
+		//free lines2 related mem
+		cur2 = NULL;
+		free(lines2[i]);//Must free it before i++
+		i++;
+		//Reset the variables:
 		token2 = NULL;
 		sub2 = NULL;
-		cur2 = NULL;
-		i++;
 		//free(token2);
-		//free(lines2[i]);
 	}
 	free(cur2);
+	free(lines2);
+	/*
 	//Verification:
 	for(size_t k=0;k<cats->num;k++){
 		fprintf(stdout, "%s:\n", cats->category[k]->tag);
-	//	free(cats->category[k]->tag);
+		free(cats->category[k]->tag);
 		for(size_t l=0;l<cats->category[k]->num;l++){
 			fprintf(stdout,"  %s\n", cats->category[k]->values[l]);
-			//free(cats->category[k]->values[l]);
+			free(cats->category[k]->values[l]);
 		}
 		free(cats->category[k]->values);
 		free(cats->category[k]);
 	}
 	free(cats->category);
 	free(cats);
-	free(lines2);
-	/*
-	free(cats->category);
-	for(size_t m=0;m<i;m++){
-		free(lines2[i]);
-	}
-	free(lines2);
 	*/
 	while(fclose(f)!=0){
 		fprintf(stderr, "Failed to close file %s\n", filename);
 		exit(EXIT_FAILURE);
 	}
 
-	//return cats;
+	return cats;
 }
 
 void readStory(char * filename){
@@ -129,7 +135,7 @@ void readStory(char * filename){
 	char * sep = "_";
 	char * token = NULL;
 	char * New = NULL;
-	//char * sub = NULL;//Store the substitute of lines
+	char * sub = NULL;//Store the substitute of lines
 	char * checkline = NULL;//Check the numer of "_"
 	const char * fill = NULL;
 	size_t lenTok;
@@ -145,7 +151,7 @@ void readStory(char * filename){
 	while(getline(&cur, &linecap, f)>=0){
 		lines = (char**)realloc(lines, (i+1)*sizeof(char*));
 		lines[i] = cur;
-		char * sub = lines[i];//Key setp: U must define a substitute of lines[i] cause the strsep() 
+		sub = lines[i];//Key setp: U must define a substitute of lines[i] cause the strsep() 
 							//function will change the origin address of line[i] that will lead 
 							//the free(lines[i]) to fail(free the new address and lost the origin one.)
 		checkline = strchr(lines[i],'_');
@@ -163,7 +169,7 @@ void readStory(char * filename){
 			fprintf(stderr, "The number of blanks input file is invalid!\n");
 			exit(EXIT_FAILURE);
 		} 	
-		while(strchr(lines[i],'_')!=NULL){
+		while(strchr(sub,'_')!=NULL){
 			/*
 			if(*lines[i]=='\n'){
 				break;
@@ -190,8 +196,10 @@ void readStory(char * filename){
 		strcat(New, sub);
 		fprintf(stdout, "%s", New);
 		free(New);
-		free(lines[i]);
+		//free(lines[i]);
 		cur = NULL;
+		free(lines[i]);
+		i++;
 		//Reset the variables:
 		token = NULL;
 		New = NULL;
@@ -206,6 +214,22 @@ void readStory(char * filename){
 		exit(EXIT_FAILURE);
 	}
 }
+
+void freeWordMem(catarray_t * cats){
+	for(size_t k=0;k<cats->num;k++){
+		fprintf(stdout, "%s:\n", cats->category[k]->tag);
+		free(cats->category[k]->tag);
+		for(size_t l=0;l<cats->category[k]->num;l++){
+			fprintf(stdout,"  %s\n", cats->category[k]->values[l]);
+			free(cats->category[k]->values[l]);
+		}
+		free(cats->category[k]->values);
+		free(cats->category[k]);
+	}
+	free(cats->category);
+	free(cats);
+}
+
 /*
 int main(int argc, char ** argv){
 	if(argc!=2){
@@ -213,6 +237,12 @@ int main(int argc, char ** argv){
 		return EXIT_FAILURE;
 	}
 	//readStory(argv[1]);
-	readWord(argv[1]);
+	catarray_t * cats = readWord(argv[1]);
+	if(cats==NULL){
+		fprintf(stderr, "The cats is invalid!\n");
+		return EXIT_FAILURE;
+	}
+	freeWordMem(cats);
+	return EXIT_SUCCESS;
 }
 */
