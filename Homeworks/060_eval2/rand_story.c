@@ -11,7 +11,6 @@ void stripNewline(char * str){
 	}
 }
 
-/*
 void replaceWord(char * filename, catarray_t * cats){
 	FILE * f = fopen(filename, "r");
 	if(f==NULL){
@@ -64,6 +63,7 @@ void replaceWord(char * filename, catarray_t * cats){
 			memset(labelIn,'\0',strlen(label)+1);
 			strncpy(labelIn, label, strlen(label));
 			fill = chooseWord(labelIn, cats);
+			free(labelIn);
 			lenFill = strlen(fill);
 			lenTok = strlen(token);
 			if(first){	
@@ -77,7 +77,7 @@ void replaceWord(char * filename, catarray_t * cats){
 			strcat(New, token);
 			strcat(New, fill);
 			lenNew = strlen(New);
-			strsep(&sub, sep);
+			//strsep(&sub, sep);
 		}
 		New = (char*)realloc(New, (lenNew+strlen(sub)+1)*sizeof(char));
 		strcat(New, sub);
@@ -101,7 +101,6 @@ void replaceWord(char * filename, catarray_t * cats){
 		exit(EXIT_FAILURE);
 	}
 }
-*/
 
 catarray_t * readWord(char * filename){
 //void readWord(char * filename){
@@ -112,8 +111,8 @@ catarray_t * readWord(char * filename){
 	}
 	//Create a catarray_t set to store the word info:
 	catarray_t * cats = (catarray_t*)malloc(sizeof(catarray_t));
-	cats->num = 0;
-	cats->category = NULL;
+	cats->n = 0;
+	cats->arr = NULL;
 	//Preparation of separation from ':':
 	char * sep2 = ":";
 	char * token2 = NULL;
@@ -147,15 +146,15 @@ catarray_t * readWord(char * filename){
 		sub2 = lines2[i]; 
 		token2 = strsep(&sub2, sep2);
 		//Traverse the crrent set to find the same element:
-		for(size_t j=0;j<cats->num;j++){
-			if(strcmp(token2, cats->category[j].tag)==0){
-				cats->category[j].num++;
-				cats->category[j].values = (char**)realloc(cats->category[j].values, cats->category[j].num*sizeof(char*));
+		for(size_t j=0;j<cats->n;j++){
+			if(strcmp(token2, cats->arr[j].name)==0){
+				cats->arr[j].n_words++;
+				cats->arr[j].words = (char**)realloc(cats->arr[j].words, cats->arr[j].n_words*sizeof(char*));
 				//Key Step: the values must malloc the memory to save, if you just make it point to 
 				//sub2 that will lead to cannot free the lines2[i].
-				cats->category[j].values[cats->category[j].num-1] = (char*)malloc((strlen(sub2)+1)*sizeof(char));
-				memset(cats->category[j].values[cats->category[j].num-1],'\0',strlen(sub2)+1);
-				strncpy(cats->category[j].values[cats->category[j].num-1], sub2, strlen(sub2)+1);
+				cats->arr[j].words[cats->arr[j].n_words-1] = (char*)malloc((strlen(sub2)+1)*sizeof(char));
+				memset(cats->arr[j].words[cats->arr[j].n_words-1],'\0',strlen(sub2)+1);
+				strncpy(cats->arr[j].words[cats->arr[j].n_words-1], sub2, strlen(sub2)+1);
 				check2 = 1;
 				break;
 			}
@@ -170,18 +169,18 @@ catarray_t * readWord(char * filename){
 			sub2 = NULL;
 			continue;
 		}
-		cats->num++;
-		cats->category = (category_t*)realloc(cats->category, cats->num*sizeof(category_t));
-		cats->category[cats->num-1].num = 1;
+		cats->n++;
+		cats->arr = (category_t*)realloc(cats->arr, cats->n*sizeof(category_t));
+		cats->arr[cats->n-1].n_words = 1;
 		//Key Step: the tag and values must malloc the memory to save, if you just make it point to 
 		//the token2 or sub2 that will lead to cannot free the lines2[i].
-		cats->category[cats->num-1].tag = (char*)malloc((strlen(token2)+1)*sizeof(char));
-		memset(cats->category[cats->num-1].tag,'\0',strlen(token2)+1);
-		strncpy(cats->category[cats->num-1].tag, token2, strlen(token2)+1);
-		cats->category[cats->num-1].values = (char**)malloc(cats->category[cats->num-1].num*sizeof(char*));
-		cats->category[cats->num-1].values[cats->category[cats->num-1].num-1] = (char*)malloc((strlen(sub2)+1)*sizeof(char));
-		memset(cats->category[cats->num-1].values[cats->category[cats->num-1].num-1],'\0',strlen(sub2)+1);
-		strncpy(cats->category[cats->num-1].values[cats->category[cats->num-1].num-1], sub2, strlen(sub2)+1);
+		cats->arr[cats->n-1].name = (char*)malloc((strlen(token2)+1)*sizeof(char));
+		memset(cats->arr[cats->n-1].name,'\0',strlen(token2)+1);
+		strncpy(cats->arr[cats->n-1].name, token2, strlen(token2)+1);
+		cats->arr[cats->n-1].words = (char**)malloc(cats->arr[cats->n-1].n_words*sizeof(char*));
+		cats->arr[cats->n-1].words[cats->arr[cats->n-1].n_words-1] = (char*)malloc((strlen(sub2)+1)*sizeof(char));
+		memset(cats->arr[cats->n-1].words[cats->arr[cats->n-1].n_words-1],'\0',strlen(sub2)+1);
+		strncpy(cats->arr[cats->n-1].words[cats->arr[cats->n-1].n_words-1], sub2, strlen(sub2)+1);
 		//free lines2 related mem
 		cur2 = NULL;
 		free(lines2[i]);//Must free it before i++
@@ -307,21 +306,20 @@ void readStory(char * filename){
 }
 
 void freeWordMem(catarray_t * cats){
-	for(size_t k=0;k<cats->num;k++){
-		fprintf(stdout, "%s:\n", cats->category[k].tag);
-		free(cats->category[k].tag);
-		for(size_t l=0;l<cats->category[k].num;l++){
-			fprintf(stdout,"  %s\n", cats->category[k].values[l]);
-			free(cats->category[k].values[l]);
+	for(size_t k=0;k<cats->n;k++){
+		fprintf(stdout, "%s:\n", cats->arr[k].name);
+		free(cats->arr[k].name);
+		for(size_t l=0;l<cats->arr[k].n_words;l++){
+			fprintf(stdout,"  %s\n", cats->arr[k].words[l]);
+			free(cats->arr[k].words[l]);
 		}
-		free(cats->category[k].values);
-		//free(cats->category[k]);
+		free(cats->arr[k].words);
 	}
-	free(cats->category);
+	free(cats->arr);
 	free(cats);
 }
 
-/*
+
 int main(int argc, char ** argv){
 	if(argc!=3){
 		fprintf(stderr, "Input command line arguments are invalid!\n");
@@ -337,4 +335,4 @@ int main(int argc, char ** argv){
 	freeWordMem(cats);
 	return EXIT_SUCCESS;
 }
-*/
+
