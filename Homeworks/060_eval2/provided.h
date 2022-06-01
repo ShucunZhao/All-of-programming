@@ -9,7 +9,7 @@ typedef struct category_tag{
 
 typedef struct catarray_tag{
 	size_t num;
-	category_t ** category;
+	category_t * category;
 }catarray_t;
 
 const char * chooseWord(char * category, catarray_t * cats);
