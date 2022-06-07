@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include "rand_story.h"
 #include "provided.h"
 
@@ -11,8 +10,6 @@ void stripNewline(char * str){
 		*ptr='\0';
 	}
 }
-
-//char * findFill(char * label){}
 
 void replaceWord(char * filename, catarray_t * cats){
 	FILE * f = fopen(filename, "r");
@@ -33,11 +30,6 @@ void replaceWord(char * filename, catarray_t * cats){
 	size_t lenFill;
 	int first=1;
 	int check=0;//Check if double '_'
-	//Create a new double pointer catarray_t to save the fill words set
-	size_t setNum = 0;
-	catarray_t * fillSet = NULL;
-	int index;
-	int check2;
 	//Read and parse the input line:
 	char ** lines = NULL;
 	char * cur = NULL;
@@ -65,53 +57,17 @@ void replaceWord(char * filename, catarray_t * cats){
 			exit(EXIT_FAILURE);
 		} 	
 		while(strchr(sub,'_')!=NULL){
- 			token = strsep(&sub, sep);
+			token = strsep(&sub, sep);
 			label = strsep(&sub, sep);
 			//Find the replace word place and the template content:
-		 	/*
+			/*
 			char * template = (char*)malloc((strlen(label)+1)*sizeof(char));
 			memset(template,'\0',strlen(label)+1);
 			strncpy(template, label, strlen(label));
 			fill = chooseWord(template, cats);
 			free(template);
 			*/
-			if(strlen(label)==1){
-				if(isdigit(*label)){
-					check2=0;
-					index = atoi(label);
-					for(size_t x=0;x<setNum;x++){
-						if(index==(int)fillSet[x].n){
-							fill = fillSet[x].arr->words[0];
-							fillSet[x].n=1;
-							check2=1;
-							continue;
-						}
-						fillSet[x].n++;
-					}
-					if(!check2){
-						fprintf(stderr, "The template number %s is invalid!\n", label);
-						exit(EXIT_FAILURE);
-					}
-				}
-				else{
-					fprintf(stderr, "The template %s is invalid!\n", label);
-				}
-			}
-			else{
-				for(size_t y=0;y<setNum;y++){
-					fillSet[y].n++;
-				}
-				//Reset the size of fill words set
-				setNum++;
-				fillSet = (catarray_t*)realloc(fillSet, setNum*sizeof(catarray_t));
-				fill = chooseWord(label, cats);
-				fillSet[setNum-1].n=1;
-				fillSet[setNum-1].arr = (category_t*)malloc(sizeof(category_t));
-				fillSet[setNum-1].arr->words=(char**)malloc(sizeof(char*));
-				fillSet[setNum-1].arr->words[0]=(char*)malloc((strlen(fill)+1)*sizeof(char));
-				memset(fillSet[setNum-1].arr->words[0], '\0', strlen(fill)+1);
-				strncpy(fillSet[setNum-1].arr->words[0], fill, strlen(fill));//copy it!
-			}
+			fill = chooseWord(label, cats);
 			lenFill = strlen(fill);
 			lenTok = strlen(token);
 			if(first){	
@@ -144,13 +100,6 @@ void replaceWord(char * filename, catarray_t * cats){
 	}
 	free(cur);
 	free(lines);
-	for(size_t z=0;z<setNum;z++){
-		free(fillSet[z].arr->words[0]);	
-		free(fillSet[z].arr->words);
-		free(fillSet[z].arr);
-	}
-	free(fillSet);
-
 	while(fclose(f)!=0){
 		fprintf(stderr, "Failed to close file %s\n!", filename);
 		exit(EXIT_FAILURE);
@@ -374,7 +323,7 @@ void freeWordMem(catarray_t * cats){
 	free(cats);
 }
 
-/*
+
 int main(int argc, char ** argv){
 	if(argc!=3){
 		fprintf(stderr, "Input command line arguments are invalid!\n");
@@ -390,4 +339,4 @@ int main(int argc, char ** argv){
 	freeWordMem(cats);
 	return EXIT_SUCCESS;
 }
-*/
+

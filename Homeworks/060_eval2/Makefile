@@ -1,6 +1,6 @@
 CFLAGS=-Wall -Werror -std=gnu99 -pedantic -ggdb3
-OBJS=provided.o rand_story.o
-PROGRAM=rand_story
+OBJS=provided.o rand_story.o story-step3.o
+PROGRAM=story-step3
 
 $(PROGRAM): $(OBJS)
 	gcc $(CFLAGS) -o $@ $(OBJS)
