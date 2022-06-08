@@ -14,7 +14,40 @@ void stripNewline(char * str){
 
 //char * findFill(char * label){}
 
-void replaceWord(char * filename, catarray_t * cats){
+catarray_t * deleteWord(catarray_t * cats, char * ditto){
+	catarray_t * temp = (catarray_t*)malloc(sizeof(catarray_t));
+	temp->n = 0;
+	temp->arr = NULL;
+	for(size_t i=0;i<cats->n;i++){
+		temp->n++;
+		temp->arr = (category_t*)realloc(temp->arr, temp->n*sizeof(category_t));
+		temp->arr[i].name = (char*)malloc((strlen(cats->arr[i].name)+1)*sizeof(char));
+		memset(temp->arr[i].name,'\0',strlen(cats->arr[i].name)+1);
+		strncpy(temp->arr[i].name,cats->arr[i].name,strlen(cats->arr[i].name));
+		temp->arr[i].n_words = 0;
+		temp->arr[i].words = NULL;
+		for(size_t j=0;j<cats->arr[i].n_words;j++){
+			if(strcmp(ditto, cats->arr[i].words[j])==0){
+				free(cats->arr[i].words[j]);
+				continue;//Skip the ditto word
+			}
+			temp->arr[i].n_words++;
+			temp->arr[i].words = (char**)realloc(temp->arr[i].words, temp->arr[i].n_words*sizeof(char*));
+			temp->arr[i].words[temp->arr[i].n_words-1] = (char*)malloc((strlen(cats->arr[i].words[j])+1)*sizeof(char));
+			memset(temp->arr[i].words[temp->arr[i].n_words-1],'\0',strlen(cats->arr[i].words[j])+1);
+			strncpy(temp->arr[i].words[temp->arr[i].n_words-1],cats->arr[i].words[j],strlen(cats->arr[i].words[j]));
+			free(cats->arr[i].words[j]);
+		}
+		free(cats->arr[i].words);
+		free(cats->arr[i].name);
+	}
+	free(cats->arr);
+	free(cats);
+	free(ditto);
+	return temp;
+}
+
+void replaceWord(char * filename, catarray_t * cats, int mode){
 	FILE * f = fopen(filename, "r");
 	if(f==NULL){
 		fprintf(stderr, "File %s is invalid!\n", filename);
@@ -38,6 +71,9 @@ void replaceWord(char * filename, catarray_t * cats){
 	catarray_t * fillSet = NULL;
 	int index;
 	int check2;
+	//Selected mode:(-n)
+	int check3;
+	int first2=1;
 	//Read and parse the input line:
 	char ** lines = NULL;
 	char * cur = NULL;
@@ -67,51 +103,66 @@ void replaceWord(char * filename, catarray_t * cats){
 		while(strchr(sub,'_')!=NULL){
  			token = strsep(&sub, sep);
 			label = strsep(&sub, sep);
-			//Find the replace word place and the template content:
-		 	/*
-			char * template = (char*)malloc((strlen(label)+1)*sizeof(char));
-			memset(template,'\0',strlen(label)+1);
-			strncpy(template, label, strlen(label));
-			fill = chooseWord(template, cats);
-			free(template);
-			*/
+			//Find the replace word place and the template content
+			//Check if the label length is 1 to determine wheter it is number.
 			if(strlen(label)==1){
 				if(isdigit(*label)){
 					check2=0;
 					index = atoi(label);
+					//Traverse the fillSet to find the represent index element
 					for(size_t x=0;x<setNum;x++){
 						if(index==(int)fillSet[x].n){
 							fill = fillSet[x].arr->words[0];
-							fillSet[x].n=1;
+							fillSet[x].n=1;//If find represent element, let it's index be 1.
 							check2=1;
 							continue;
 						}
-						fillSet[x].n++;
+						fillSet[x].n++;//Let other non-found element index accumulate
 					}
-					if(!check2){
+					if(!check2){//If didn't find any represent element, there was a error index.
 						fprintf(stderr, "The template number %s is invalid!\n", label);
 						exit(EXIT_FAILURE);
 					}
 				}
 				else{
-					fprintf(stderr, "The template %s is invalid!\n", label);
+					fprintf(stderr, "The template %s is invalid!\n", label);//Error: length is 1 but isn't number
 				}
 			}
-			else{
+			else{//If template isn't number, add the new fill element.
 				for(size_t y=0;y<setNum;y++){
 					fillSet[y].n++;
 				}
-				//Reset the size of fill words set
+				//Find the first shouw fill word.
+				fill = chooseWord(label, cats);
+				if(mode==1&&(!first2)){//Check if the selected mode:
+					check3=0;
+					for(size_t g=0;g<setNum;g++){
+						if(strcmp(fill,fillSet[g].arr->words[0])==0){
+							char * ditto = (char*)malloc((strlen(fill)+1)*sizeof(char));
+							memset(ditto,'\0',strlen(fill)+1);
+							strncpy(ditto, fill, strlen(fill));
+							cats = deleteWord(cats, ditto);//Cause the random seed is certain so that the return word is same each time
+													      //If u want to return a non-reuse word u should delete the used one from the cats
+							check3 = 1;	
+							break;
+						}
+					}
+					if(check3){
+						fill = chooseWord(label, cats);
+					}
+				}
+				//After found the fill, reset the size of fill words set and add it:
 				setNum++;
 				fillSet = (catarray_t*)realloc(fillSet, setNum*sizeof(catarray_t));
-				fill = chooseWord(label, cats);
 				fillSet[setNum-1].n=1;
 				fillSet[setNum-1].arr = (category_t*)malloc(sizeof(category_t));
 				fillSet[setNum-1].arr->words=(char**)malloc(sizeof(char*));
 				fillSet[setNum-1].arr->words[0]=(char*)malloc((strlen(fill)+1)*sizeof(char));
 				memset(fillSet[setNum-1].arr->words[0], '\0', strlen(fill)+1);
 				strncpy(fillSet[setNum-1].arr->words[0], fill, strlen(fill));//copy it!
+				first2=0;//Close the first button.
 			}
+			//After determining the final fill word, do the splice step:
 			lenFill = strlen(fill);
 			lenTok = strlen(token);
 			if(first){	
@@ -125,13 +176,11 @@ void replaceWord(char * filename, catarray_t * cats){
 			strcat(New, token);
 			strcat(New, fill);
 			lenNew = strlen(New);
-			//strsep(&sub, sep);
 		}
 		New = (char*)realloc(New, (lenNew+strlen(sub)+1)*sizeof(char));
 		strcat(New, sub);
 		fprintf(stdout, "%s", New);
 		free(New);
-		//free(lines[i]);
 		cur = NULL;
 		free(lines[i]);
 		i++;
@@ -150,7 +199,11 @@ void replaceWord(char * filename, catarray_t * cats){
 		free(fillSet[z].arr);
 	}
 	free(fillSet);
-
+	//Key step: If in mode 1, you should free the new generated cats in deleteWord here!
+	//Other mode would free cats in freeWordMem out of the replaceWord box.
+	if(mode==1){
+		freeWordMem(cats);
+	}
 	while(fclose(f)!=0){
 		fprintf(stderr, "Failed to close file %s\n!", filename);
 		exit(EXIT_FAILURE);
@@ -189,11 +242,11 @@ catarray_t * readWord(char * filename){
 		if(checkline2==NULL){
 			fprintf(stderr, "Line %ld format of input file is invalid!\n", i);
 			exit(EXIT_FAILURE);
-		} 	
+		} 
 		while(*checkline2!='\0'){
 			checkline2++;
 			if(*checkline2==':'){
-				fprintf(stderr, "The number of ':' in line %ld of input file is invalid!\n", i);
+				fprintf(stderr, "The number of ':' in line %ld of input file %s is invalid!\n", i, filename);
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -354,6 +407,7 @@ void readStory(char * filename){
 	}
 	free(cur);
 	free(lines);
+
 	while(fclose(f)!=0){
 		fprintf(stderr, "Failed to close file %s\n!", filename);
 		exit(EXIT_FAILURE);
@@ -376,18 +430,38 @@ void freeWordMem(catarray_t * cats){
 
 /*
 int main(int argc, char ** argv){
-	if(argc!=3){
+	int mode = 0;
+	if(argc==4){
+		if(strcmp(argv[1], "-n")==0){
+			mode=1;
+		}
+		else{
+			fprintf(stderr, "The selective argument %s is invalid!\n", argv[1]);
+			return EXIT_FAILURE;
+		}
+		//readStory(argv[1]);
+		catarray_t * cats = readWord(argv[2]);
+		if(cats==NULL){
+			fprintf(stderr, "The cats is invalid!\n");
+			return EXIT_FAILURE;
+		}
+		replaceWord(argv[3], cats, mode);
+	//	freeWordMem(cats);
+	}
+	else if(argc==3){
+		//readStory(argv[1]);
+		catarray_t * cats = readWord(argv[1]);
+		if(cats==NULL){
+			fprintf(stderr, "The cats is invalid!\n");
+			return EXIT_FAILURE;
+		}
+		replaceWord(argv[2], cats, mode);
+		freeWordMem(cats);
+	}
+	else{
 		fprintf(stderr, "Input command line arguments are invalid!\n");
 		return EXIT_FAILURE;
 	}
-	//readStory(argv[1]);
-	catarray_t * cats = readWord(argv[1]);
-	if(cats==NULL){
-		fprintf(stderr, "The cats is invalid!\n");
-		return EXIT_FAILURE;
-	}
-	replaceWord(argv[2], cats);
-	freeWordMem(cats);
 	return EXIT_SUCCESS;
 }
 */

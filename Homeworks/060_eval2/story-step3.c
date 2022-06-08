@@ -14,7 +14,7 @@ int main(int argc, char ** argv){
 		fprintf(stderr, "The cats is invalid!\n");
 		return EXIT_FAILURE;
 	}
-	replaceWord(argv[2], cats);
+	replaceWord(argv[2], cats, 0);
 	freeWordMem(cats);
 	return EXIT_SUCCESS;
 }
