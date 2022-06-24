@@ -1,0 +1,10 @@
+pepo[0]-pet[0]: hungerlevel=60 feed50 ==10
+pepo[1]-pet[1]: hungerlevel=80 feed40 ==40
+pepo[3]-pet[2]: hungerlevel=100 fed20 == 80
+
+Output:
+Hades has the pet: Cerberus the 3-headed dog (who is a bit hungry)
+Perseus has the pet: Pegasus the flying horse (who is hungry)
+Zeus has not pet
+Cyclops has the pet: Fluffy the sheep (who is very hungry)
+
