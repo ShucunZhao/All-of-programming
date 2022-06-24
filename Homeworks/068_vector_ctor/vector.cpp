@@ -15,7 +15,7 @@ Vector2D::Vector2D() : x(0), y(0){
 
 }
 
-Vector2D::Vector2D(int xIn, int yIn) : x(xIn), y(yIn){
+Vector2D::Vector2D(double xIn, double yIn) : x(xIn), y(yIn){
 
 }
 

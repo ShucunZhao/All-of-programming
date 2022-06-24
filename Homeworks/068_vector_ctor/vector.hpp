@@ -6,7 +6,7 @@ private:
 public:
 	//void initVector(double init_x, double init_y);
 	Vector2D();
-	Vector2D(int xIn, int yIn);
+	Vector2D(double xIn, double yIn);
 	double getMagnitude() const;
 	Vector2D operator+(const Vector2D & rhs) const;
 	Vector2D & operator+=(const Vector2D & rhs);
