@@ -1,11 +1,11 @@
 CPPFLAGS=-std=gnu++11 -pedantic -Wall -Werror -ggdb3
-fileSum: fileSum.o
-	g++ -o fileSum fileSum.o
-fileSum.o: fileSum.cpp
-	g++ $(CPPFLAGS) -c fileSum.cpp
-#myCat: myCat.o
-#	g++ -o myCat myCat.o
-#myCat.o: myCat.cpp
+fileSum2: fileSum2.o
+	g++ -o fileSum2 fileSum2.o
+fileSum2.o: fileSum2.cpp
+	g++ $(CPPFLAGS) -c fileSum2.cpp
+#myCat2: myCat2.o
+#	g++ -o myCat2 myCat2.o
+myCat2.o: myCat2.cpp
 #	g++ $(CPPFLAGS) -c myCat.cpp
 #myEcho: myEcho.o
 #	g++ -o myEcho myEcho.o
@@ -24,8 +24,8 @@ fileSum.o: fileSum.cpp
 
 .PHONY: clean
 clean:
-	rm -f *.o *~ fileSum
-#	rm -f *.o *~ myCat
+#	rm -f *.o *~ fileSum
+	rm -f *.o *~ myCat2
 #	rm -f *.o *~ myEcho
 #	rm -f *.o *~ Q16.5
 #	rm -f *.o *~ Q16.4
