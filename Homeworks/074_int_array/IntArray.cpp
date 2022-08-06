@@ -32,8 +32,8 @@ IntArray & IntArray::operator=(const IntArray & rhs){
 		//heap automatically, if you assign the new value to it we cannot 
 		//determine the new size of memory, so you shoule delete it first
 		//and new a new memory address and let data handle the new memory.
-		int * temp = new int[numElements];
-		for(int i=0;i<numElements;i++){
+		int * temp = new int[rhs.numElements];
+		for(int i=0;i<rhs.numElements;i++){
 			temp[i] = rhs[i];
 		}
 		delete[] data;
@@ -50,12 +50,14 @@ int & IntArray::operator[](int index){
 	assert(index>=0||index<=numElements);
 	int & result = data[index];
 	return result;
+	//return data[index];
 }
 
 const int & IntArray::operator[](int index)const{
 	assert(index>=0||index<=numElements);
 	const int & result = data[index];
 	return result;
+	//return data[index];
 }
 
 int IntArray::size()const{
