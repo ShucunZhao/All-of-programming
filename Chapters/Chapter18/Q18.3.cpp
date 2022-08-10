@@ -24,6 +24,7 @@ int main(int argc, char ** argv){
 	Sub S;
 	Test * ptr1 = &T;
 	Test * ptr2 = &S;
+	//Sub * ptr3 = &T;(This convert is invalid because the subclass must belong to baseclass but reverse is not satisfied)
 	ptr1->someA();
 	ptr2->someA();
 	return EXIT_SUCCESS;
