@@ -84,9 +84,9 @@ Expression * parse(const char ** strp) {
 int main(int argc, char ** argv) {
   char * line = NULL;
   size_t sz;
-  FILE * f = fopen(argv[1], "r");
-  while (getline(&line, &sz, f) != -1) {
-  //while (getline(&line, &sz, stdin) != -1) {
+  //FILE * f = fopen(argv[1], "r");
+  //while (getline(&line, &sz, f) != -1) {
+  while (getline(&line, &sz, stdin) != -1) {
     const char * temp = line;
     std::cout << "Read expression: " << line;
     Expression * expr = parse(&temp);
@@ -101,8 +101,9 @@ int main(int argc, char ** argv) {
     }
   }
   free(line);
+  /*
   while(fclose(f)!=0){
   	std::cerr<<"Cannot close the file: "<<argv[1]<<std::endl;
-  }
+  }*/
   return EXIT_SUCCESS;
 }
