@@ -84,10 +84,12 @@ Expression * parse(const char ** strp) {
 }
 
 int main(int argc, char ** argv) {
-  for(int i=0;i<argc;i++){
+  //for(int i=0;i<argc;i++){
   	char * line = NULL;
   	size_t sz;
+	//FILE * f = fopen(argv[1], "r");
   	while (getline(&line, &sz, stdin) != -1) {
+	//while(getline(&line,&sz,f)){
     	const char * temp = line;
     	std::cout << "Read expression: " << line;
     	Expression * expr = parse(&temp);
@@ -102,6 +104,10 @@ int main(int argc, char ** argv) {
   	  }
   	}
   	free(line);
-  }
+	/*
+	while(fclose(f)!=0){
+		std::cerr<<"failed to close "<<argv[1]<<std::endl;
+	}
+	*/
 	  return EXIT_SUCCESS;
 }
