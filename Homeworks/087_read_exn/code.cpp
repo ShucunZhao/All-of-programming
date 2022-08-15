@@ -25,7 +25,7 @@ int g(int a, int b) {
 
 int f(int x) {//x=-40
   int total = 0;
-  Something(42);
+  Something(42);//This is the unamed temporary object that would be destructed after this line.
   for (int i = 37; i <= 42; i++) {
     total += g (x, i);//g(-40,37):26,g(-40,38):65,g(-40,39):144,g(-40,40):
   }
