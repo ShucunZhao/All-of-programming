@@ -11,8 +11,11 @@ int main(int argc, char ** argv){
 		cerr<<"The input command line arguments is invalid!"<<endl;
 		return EXIT_FAILURE;
 	}
-	Page page1;
-	page1.readPage(argv[1]);
-	page1.printPage();
+	Page page;
+	if(!page.readPage(argv[1])){
+		cerr<<"The file "<<argv[1]<<" is invalid!\n";
+		return EXIT_FAILURE;
+	}
+	page.printPage();
 	return EXIT_SUCCESS;
 }

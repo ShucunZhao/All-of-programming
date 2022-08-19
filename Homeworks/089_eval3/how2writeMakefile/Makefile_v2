@@ -1,0 +1,22 @@
+# OBJS for .o files(dependence)
+# CC for gcc/g++(cmd)
+# CFLAGS for -std=gnu++11 -pedantic -Wall -Werror -ggdb3(command arguments)
+
+OBJS=cyoa-step2.o directory.o page.o
+CC=g++
+CFLAGS=-std=gnu++11 -pedantic -Wall -Werror -ggdb3
+
+cyoa-step2: $(OBJS)
+	$(CC) $(OBJS) $(CFLAGS) -o cyoa-step2
+
+cyoa-step2.o:cyoa-step2.cpp
+	$(CC) cyoa-step2.cpp -c $(CFLAGS) -o cyoa-step2.o
+
+directory.o:directory.cpp
+	$(CC) directory.cpp -c $(CFLAGS) -o directory.o
+
+page.o: page.cpp
+	$(CC) page.cpp -c $(CFLAGS) -o page.o
+
+clean:
+	rm *.o cyoa-step2 -rf

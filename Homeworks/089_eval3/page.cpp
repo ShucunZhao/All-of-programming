@@ -9,42 +9,59 @@ using namespace std;
 Page::Page(vector<string> & rhs){
 	
 }*/
-
-void Page::readPage(char * filename){
+/*
+Page::Page(){
+	content.first = 0;
+	content.second(0)
+}
+*/
+bool Page::readPage(char * filename){
 	bool check = 0;
-	bool lose = 0;
-	bool win = 0;
-	bool find = 1;
+	//bool lose = 0;
+	//bool win = 0;
+	bool begin = 1;
+	//cout<<filename<<endl;
 	string loseFlag("LOSE");
 	string winFlag("WIN");
 	//string blank("\n");
 	ifstream f(filename);
 	if(!f){
-		cerr<<"The file "<<filename<<" is invalid!\n";
-		exit(EXIT_FAILURE);
+		return 0;
+		//exit(EXIT_FAILURE);
 	}
 	string str;
-	vector<string> text;
-	string temp;
+	//vector<string> text;
+	//string temp;
 	int i = 1;
 	while(getline(f,str)){
-		if(find){
+		if(begin){
 			if(str==loseFlag){
-				lose=1;
+				content.first = 1;
 			}
 			if(str==winFlag){
-				win=1;
+				content.first = 2;
 			}
-			find = 0;
+			begin = 0;
 		}
 		if(str[0]!='#'&&!check){
-			if(!lose&&!win){
+			if(content.first==0){
 				stringstream ss;
 				ss<<i;
-				string index = " "+ss.str()+". ";
+				string opt = " "+ss.str()+". ";
 				//cout<<str.substr(str.find(":"));
-				index.insert(index.size(), str.substr(str.find(":")+1));
-				text.push_back(index);
+				opt.insert(opt.size(), str.substr(str.find(":")+1));
+				ss.str("");
+				Choice c;
+				//string jump = str.substr(0,str.find(":"));
+				c.jump = stoi(str.substr(0,str.find(":")));
+				/*
+				cout<<"----------"<<endl;
+				cout<<text.second.first<<endl;
+				cout<<"----------"<<endl;
+				*/
+				c.option=opt;
+				c.index = i;
+				choices.push_back(c);
 				i++;
 			}
 		}
@@ -55,27 +72,56 @@ void Page::readPage(char * filename){
 			}
 		}
 		if(check){
-			content.push_back(str);
+			content.second.push_back(str);
 		}
 	}
-	content.push_back(" ");
-	if(lose){
-		content.push_back("Sorry, you have lost. Better luck next time!");
-	}
-	else if(win){
-		content.push_back("Congratulations! You have won. Hooray!");
-	}
-	else{
-		content.push_back("What would you like to do?\n");
-		content.insert(content.end(), text.begin(), text.end());
-	}
 	f.close();
+	return 1;
 }
 
 void Page::printPage(){
-	vector<string>::iterator it = content.begin();
-	while(it!=content.end()){
+	vector<string>::iterator it = content.second.begin();
+	while(it!=content.second.end()){
 		cout<<*it<<endl;
 		++it;
 	}
+	cout<<endl;//blank line
+	if(content.first==1){
+		cout<<"Sorry, you have lost. Better luck next time!"<<endl;
+	}
+	else if(content.first==2){
+		cout<<"Congratulations! You have won. Hooray!"<<endl;
+	}
+	else{
+		cout<<"What would you like to do ?"<<endl;
+		printChoice();
+	}
+}
+
+void Page::printChoice(){
+	cout<<endl;//blank line
+	vector<Choice>::iterator it = choices.begin();
+	while(it!=choices.end()){
+		cout<<it->option<<endl;
+		++it;
+	}
+}
+
+/*
+void Choice::getIndex() const{
+	return index;
+}
+
+void Choice::getJump() const{
+	return jump;
+}
+*/
+
+void Page::setPageNum(unsigned num){
+	pageNum = num;
+}
+
+int Page::getFlag() const{
+	int flag = content.first;
+	return flag;
 }

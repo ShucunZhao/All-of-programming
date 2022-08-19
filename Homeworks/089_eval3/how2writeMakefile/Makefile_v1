@@ -1,0 +1,14 @@
+cyoa-step2: cyoa-step2.o directory.o page.o
+	g++ -std=gnu++11 -pedantic -Wall -Werror -ggdb3 cyoa-step2.o directory.o page.o -o cyoa-step2
+
+cyoa-step2.o: cyoa-step2.cpp
+	g++ cyoa-step2.cpp -c -std=gnu++11 -pedantic -Wall -Werror -ggdb3 -o cyoa-step2.o
+
+directory.o: directory.cpp
+	g++ directory.cpp -c -std=gnu++11 -pedantic -Wall -Werror -ggdb3 -o directory.o
+
+page.o: page.cpp
+	g++ page.cpp -c -std=gnu++11 -pedantic -Wall -Werror -ggdb3 -o page.o
+
+clean:
+	rm *.o cyoa-step2 -rf
