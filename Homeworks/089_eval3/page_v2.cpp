@@ -5,7 +5,16 @@
 #include <iostream>
 
 using namespace std;
-
+/*
+Page::Page(vector<string> & rhs){
+	
+}*/
+/*
+Page::Page(){
+	content.first = 0;
+	content.second(0)
+}
+*/
 bool Page::readPage(char * filename){
 	bool check = 0;
 	//bool lose = 0;
@@ -70,8 +79,8 @@ bool Page::readPage(char * filename){
 	return 1;
 }
 
-void Page::printPage()const{
-	vector<string>::const_iterator it = content.second.begin();
+void Page::printPage(){
+	vector<string>::iterator it = content.second.begin();
 	while(it!=content.second.end()){
 		cout<<*it<<endl;
 		++it;
@@ -89,9 +98,9 @@ void Page::printPage()const{
 	}
 }
 
-void Page::printChoice()const{
+void Page::printChoice(){
 	cout<<endl;//blank line
-	vector<Choice>::const_iterator it = choices.begin();
+	vector<Choice>::iterator it = choices.begin();
 	while(it!=choices.end()){
 		cout<<it->option<<endl;
 		++it;
@@ -115,26 +124,4 @@ void Page::setPageNum(unsigned num){
 int Page::getFlag() const{
 	int flag = content.first;
 	return flag;
-}
-
-unsigned Page::getPageNum()const{
-	return pageNum;
-}
-
-bool Page::isEndpage() const{
-	if(content.first==0){
-		return 0;
-	}
-	else{
-		return 1;
-	}
-}
-
-bool Page::operator<(const Page & rhs)const{
-	if(this->pageNum!=rhs.pageNum){
-		return 1;
-	}
-	else{
-		return 0;
-	}
 }

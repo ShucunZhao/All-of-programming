@@ -3,6 +3,17 @@
 
 using namespace std;
 
+/*
+template<typename T>
+void printElements(T & container){
+	typename T::iterator it = container.begin();
+	while(it!=container.end()){
+		cout<<*it<<endl;
+		++it;
+	}
+}
+*/
+
 class Choice{
 /*
 private:
@@ -11,8 +22,8 @@ private:
 	vector<string> option;
 	*/
 public:
-	unsigned index;//Save the index in page
-	unsigned jump;//Save the real jump number
+	unsigned index;
+	unsigned jump;
 	string option;
 	Choice():index(0),jump(0),option(){};
 	//void printChoice();
@@ -38,11 +49,8 @@ public:
 	}*/
 	~Page(){};
 	bool readPage(char * filename);
-	void printPage()const;
-	void printChoice()const;
+	void printPage();
+	void printChoice();
 	void setPageNum(unsigned num);
 	int getFlag() const;
-	unsigned getPageNum()const;
-	bool isEndpage()const;
-	bool operator < (const Page & rhs)const;
 };

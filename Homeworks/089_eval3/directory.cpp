@@ -1,6 +1,12 @@
 #include "directory.h"
+#include <set>
 #include <sstream>
 
+/*
+ * @param pathname: The second command line argument which is the path of input files.
+ * return void.
+ * This func is used for reading all input files page information into a pages vector.
+ */
 void Direct::readDirect(char * pathname){
 	unsigned num = 1;
 	while(1){
@@ -23,13 +29,20 @@ void Direct::readDirect(char * pathname){
 	}
 }
 
-
+/*
+ * return void.
+ * This func is used for printing all page information with the require of step1.
+ */
 void Direct::printDirect(){
 	for(size_t i=0;i<pages.size();i++){
 		pages[i].printPage();
 	}
 }
 
+/*
+ * return void.
+ * This func is used for checking the input with the request of step2.
+ */
 void Direct::checkEnter(){
 	size_t i = 0;
 	while(i<pages.size()){
@@ -49,7 +62,7 @@ void Direct::checkEnter(){
 				}
 				for(size_t j=0;j<pages[i].choices.size();j++){
 					if(pages[i].choices[j].index==x){
-						i = pages[i].choices[j].jump;
+						i = pages[i].choices[j].jump - 1;
 						find = 1;
 						break;
 					}
@@ -57,9 +70,120 @@ void Direct::checkEnter(){
 				if(find){
 					break;
 				}
-				cout<<"The number is out of bound, try again!"<<endl;
+				cerr<<"The number is out of bound, try again!"<<endl;
 			}
 		}
 	}
 }
 
+/*
+ * return void.
+ * This func is used for checking if the the references of each pages is valid.
+ * And use a validPageSet to check if the number of the all reference pages is corresponding to the number of pages.
+ */
+void Direct::checkRefer(){
+	bool win=0;
+	bool lose=0;
+	unsigned pageSize = getPagesize();
+	set<unsigned> validPageSet;
+	validPageSet.insert(pages[0].getPageNum());//Add the first original page into the valid page set.
+	for(size_t i=0;i<pageSize;i++){
+		int flag = pages[i].getFlag();
+		if(flag==2){
+			win = 1;
+		}
+		if(flag==1){
+			lose = 1;
+		}
+		for(size_t j=0;j<pages[i].choices.size();j++){
+			unsigned referNum = pages[i].choices[j].jump;
+			if(referNum==0||referNum>pageSize){
+				cerr<<"The reference number "<<pages[i].choices[j].jump<<"is invalid!\n"<<endl;
+				exit(EXIT_FAILURE);
+			}
+			validPageSet.insert(referNum);
+		}
+	}	
+	if(!win&&!lose){
+		cerr<<"Pages have no end page!"<<endl;
+		exit(EXIT_SUCCESS);
+	}
+	if(validPageSet.size()!=pageSize){
+		cerr<<"The number of pages is not corresponding to the reference number!"<<endl;
+		exit(EXIT_SUCCESS);
+	}
+}
+
+/*
+ * return private member pageNum.
+ */
+int Direct::getPagesize() const {
+	return pages.size();
+}
+
+/*
+ * return a set to sore the reachable pages.
+ * This func is used for checking the input with the request of step2.
+ */
+set<Page> Direct::getReachable(){
+	set<Page> reachPages;
+	//Page p0 = page
+	reachPages.insert(pages[0]);
+	set<Page>::const_iterator itPage = reachPages.begin();
+	size_t index = 0;
+	//set<Page>::const_iterator itendPage = reachPages.end();
+	while(index!=reachPages.size()){
+		if((*itPage).isEndpage()==0){
+			vector<Choice>::const_iterator itChoice = (*itPage).choices.begin();
+			while(itChoice!=(*itPage).choices.end()){
+				reachPages.insert(pages[(*itChoice).jump - 1]);
+				++itChoice;
+			}
+		}
+		index++;
+		++itPage;
+		//itendPage = reachPages.end();
+	}
+	return reachPages;
+} 
+
+/*
+ * @param intput: A set that stores reachable pages.
+ * return void.
+ * This func is used for printing all reachable pages.
+ */
+void Direct::printSet(set<Page> & input)const{
+	set<Page>::const_iterator it = input.begin();
+	int i =1;
+	while(it!=input.end()){
+		cout<<"The "<<i<<" reachable page is:"<<endl;
+		(*it).printPage();
+		++it;
+		i++;
+	}
+}
+
+/*
+ * @param intput: A set that stores reachable pages.
+ * return void.
+ * This func is used for finding the unreachable pages.
+ */
+void Direct::unReachable(set<Page> & input)const{
+	unsigned pageNum;
+	int find = 0;
+	for(size_t i=0;i<pages.size();i++){
+		set<Page>::const_iterator it = input.begin();
+		pageNum = pages[i].getPageNum();
+		while(it!=input.end()){
+			if(pageNum==(*it).getPageNum()){
+				find = 1;
+				break;
+			}
+			++it;
+		}
+		if(!find){
+			cout<<"The page "<<pageNum<<" is unreachable!"<<endl;
+		}
+		find = 0;
+	}		
+}

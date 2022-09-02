@@ -1,4 +1,5 @@
 #include <vector>
+#include <set>
 #include "page.h"
 
 class Direct{
@@ -10,4 +11,9 @@ public:
 	void readDirect(char * pathname);
 	void printDirect();
 	void checkEnter();
+	void checkRefer();//Refer means jump to a specific page.
+	int getPagesize() const;
+	set<Page> getReachable();
+	void printSet(set<Page> & input)const;
+	void unReachable(set<Page> & input)const;
 };
