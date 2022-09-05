@@ -138,3 +138,19 @@ bool Page::operator<(const Page & rhs)const{
 		return 0;
 	}
 }
+
+void Page::setNaviNum(unsigned num){
+	naviNum = num;
+}
+
+unsigned Page::getNaviNum()const{
+	return naviNum;
+}
+
+void Page::setChoiceNum(unsigned num){
+	choiceNum = num;
+}
+
+unsigned Page::getChoiceNum()const{
+	return choiceNum;
+}

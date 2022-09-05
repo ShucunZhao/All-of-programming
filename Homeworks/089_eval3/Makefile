@@ -17,8 +17,8 @@
 #  all: for one-by-one compile
 #---------------version 6---------------
 
-PROGS=cyoa-step1 cyoa-step2 cyoa-step3
-OBJS=cyoa-step3.o cyoa-step2.o cyoa-step1 cyoa-step1.o directory.o page.o 
+PROGS=cyoa-step1 cyoa-step2 cyoa-step3 cyoa-step4
+OBJS=cyoa-step4.o cyoa-step3.o cyoa-step2.o cyoa-step1 cyoa-step1.o directory.o page.o 
 CC=g++
 CFLAGS=-std=gnu++11 -pedantic -Wall -Werror -ggdb3
 

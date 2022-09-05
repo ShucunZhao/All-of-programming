@@ -10,4 +10,4 @@ cyoa-step3: $(OBJS)
 
 .PHONY: clean
 clean:
-	$(RM) *.o cyoa-step3 -r
+	$(RM) *.o cyoa-step3.o  -r

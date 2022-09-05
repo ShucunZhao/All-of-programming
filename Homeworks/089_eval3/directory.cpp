@@ -127,22 +127,22 @@ int Direct::getPagesize() const {
  */
 set<Page> Direct::getReachable(){
 	set<Page> reachPages;
-	//Page p0 = page
+	set<Page> tempSet;
 	reachPages.insert(pages[0]);
-	set<Page>::const_iterator itPage = reachPages.begin();
-	size_t index = 0;
-	//set<Page>::const_iterator itendPage = reachPages.end();
-	while(index!=reachPages.size()){
-		if((*itPage).isEndpage()==0){
-			vector<Choice>::const_iterator itChoice = (*itPage).choices.begin();
-			while(itChoice!=(*itPage).choices.end()){
-				reachPages.insert(pages[(*itChoice).jump - 1]);
-				++itChoice;
+	//set<Page>::const_iterator itPage = reachPages.begin();
+	while(tempSet.size()!=reachPages.size()){
+		tempSet = reachPages;
+		set<Page>::const_iterator itTemp = tempSet.begin();
+		while(itTemp!=tempSet.end()){
+			if((*itTemp).isEndpage()==0){
+				vector<Choice>::const_iterator itChoice = (*itTemp).choices.begin();
+				while(itChoice!=(*itTemp).choices.end()){
+					reachPages.insert(pages[(*itChoice).jump - 1]);
+					++itChoice;
+				}
 			}
+			++itTemp;
 		}
-		index++;
-		++itPage;
-		//itendPage = reachPages.end();
 	}
 	return reachPages;
 } 
@@ -186,4 +186,74 @@ void Direct::unReachable(set<Page> & input)const{
 		}
 		find = 0;
 	}		
+}
+
+void Direct::checkWin(set<Page> & input)const{
+	set<Page>::const_iterator it = input.begin();
+	bool findWin = 0;
+	while(it!=input.end()){
+		if((*it).getFlag()==2){
+			findWin = 1;
+		}
+		++it;
+	}
+	if(!findWin){
+		cerr<<"There is no way to win"<<endl;
+		exit(EXIT_FAILURE);		
+	}
+}
+
+void Direct::writeNaviNum(set<Page> & input){
+	set<Page>::const_iterator setIt = input.begin();
+	unsigned pageNum;
+	unsigned jumpNum;
+	unsigned choiceNum;
+	while(setIt!=input.end()){
+		pageNum = (*setIt).getPageNum();
+		//vector<Choice>::const_iterator chIt = pages[pageNum-1].choices.begin();
+		vector<Choice>::const_iterator chIt = pages[pageNum-1].choices.begin();
+		while(chIt!=pages[pageNum-1].choices.end()){
+			jumpNum = (*chIt).jump;
+			choiceNum = (*chIt).index;
+			pages[jumpNum-1].setNaviNum(pageNum);
+			pages[jumpNum-1].setChoiceNum(choiceNum);
+			++chIt;
+		}
+		++setIt;
+	}
+}
+
+void Direct::printWinpath(set<Page> & input)const{
+	vector<Page>::const_iterator pageIt = pages.begin();
+	unsigned pageNum;
+	unsigned naviNum;
+	unsigned choiceNum;
+	unsigned winNum;
+	int flag;
+	while(pageIt!=pages.end()){
+		pageNum = (*pageIt).getPageNum();
+		set<Page>::const_iterator setIt = input.begin();
+		while(setIt!=input.end()){
+			if(pageNum==(*setIt).getPageNum()){
+				flag = (*pageIt).getFlag();
+				if(flag==2){
+					winNum = pageNum;
+					naviNum = (*pageIt).getNaviNum();
+					choiceNum = (*pageIt).getChoiceNum();
+					//cout<<"Page "<<pageNum<<" WIN"<<endl;
+					while(pageNum!=1){
+						cout<<"Page "<<naviNum<<" Choice "<<choiceNum<<endl;
+						pageNum = naviNum;
+						naviNum = pages[pageNum-1].getNaviNum();
+						choiceNum = pages[pageNum-1].getChoiceNum();
+					}
+					cout<<"Page "<<winNum<<" WIN"<<endl;
+					return;
+				}
+				
+			}
+			++setIt;
+		}
+		++pageIt;
+	}
 }

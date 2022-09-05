@@ -16,4 +16,7 @@ public:
 	set<Page> getReachable();
 	void printSet(set<Page> & input)const;
 	void unReachable(set<Page> & input)const;
+	void checkWin(set<Page> & input)const;
+	void writeNaviNum(set<Page> & input);
+	void printWinpath(set<Page> & input)const;
 };

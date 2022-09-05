@@ -24,13 +24,15 @@ public:
 class Page{
 private:
 	unsigned pageNum;
+	unsigned naviNum;
+	unsigned choiceNum;
 	//Choice choices;
 	pair<int, vector<string> > content;
 	//first: 0-normal; 1-lose; 2-win
 	//second: content of page
 public:
 	vector<Choice> choices;
-	Page():pageNum(0),content(0,0){};
+	Page():pageNum(0),naviNum(0),choiceNum(0),content(0,0){};
 	/*
 	Page(vector<string> & rhs):content(rhs.content);
 	Page & operator=(vector<string> & rhs){
@@ -45,4 +47,8 @@ public:
 	unsigned getPageNum()const;
 	bool isEndpage()const;
 	bool operator < (const Page & rhs)const;
+	void setNaviNum(unsigned num);
+	unsigned getNaviNum()const;
+	void setChoiceNum(unsigned num);
+	unsigned getChoiceNum()const;
 };
