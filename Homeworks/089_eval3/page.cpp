@@ -131,12 +131,7 @@ bool Page::isEndpage() const{
 }
 
 bool Page::operator<(const Page & rhs)const{
-	if(this->pageNum!=rhs.pageNum){
-		return 1;
-	}
-	else{
-		return 0;
-	}
+	return this->pageNum<rhs.pageNum;//Key point for sorting in Set when inserting new element in it.
 }
 
 void Page::setNaviNum(unsigned num){

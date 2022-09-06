@@ -131,6 +131,7 @@ set<Page> Direct::getReachable(){
 	reachPages.insert(pages[0]);
 	//set<Page>::const_iterator itPage = reachPages.begin();
 	while(tempSet.size()!=reachPages.size()){
+		//tempSet = copy.deepcopy(reachPages);
 		tempSet = reachPages;
 		set<Page>::const_iterator itTemp = tempSet.begin();
 		while(itTemp!=tempSet.end()){
