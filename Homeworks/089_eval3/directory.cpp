@@ -124,6 +124,9 @@ int Direct::getPagesize() const {
 /*
  * return a set to sore the reachable pages.
  * This func is used for checking the input with the request of step2.
+ * The key to this function is use a temporary set to compare with the 
+ * previous reachable pages set, or you can't refresh the set information
+ * in each loop.
  */
 set<Page> Direct::getReachable(){
 	set<Page> reachPages;
@@ -189,6 +192,11 @@ void Direct::unReachable(set<Page> & input)const{
 	}		
 }
 
+
+/*
+ * return void.
+ * This func is to check if there is a win page exits.
+ */
 void Direct::checkWin(set<Page> & input)const{
 	set<Page>::const_iterator it = input.begin();
 	bool findWin = 0;
@@ -204,6 +212,11 @@ void Direct::checkWin(set<Page> & input)const{
 	}
 }
 
+/*
+ * @param input: The reference of the reachable set.
+ * return void.
+ * This func is used for determining the navigation number of each reachable pages.
+ */
 void Direct::writeNaviNum(set<Page> & input){
 	set<Page>::const_iterator setIt = input.begin();
 	unsigned pageNum;
@@ -211,7 +224,6 @@ void Direct::writeNaviNum(set<Page> & input){
 	unsigned choiceNum;
 	while(setIt!=input.end()){
 		pageNum = (*setIt).getPageNum();
-		//vector<Choice>::const_iterator chIt = pages[pageNum-1].choices.begin();
 		vector<Choice>::const_iterator chIt = pages[pageNum-1].choices.begin();
 		while(chIt!=pages[pageNum-1].choices.end()){
 			jumpNum = (*chIt).jump;
@@ -224,6 +236,13 @@ void Direct::writeNaviNum(set<Page> & input){
 	}
 }
 
+/*
+ * @param input: The reference of the reachable set.
+ * return void.
+ * This func is used for printing the win path of this CYOA game.
+ * The key to implement this function is use a vector to store the navigation information
+ * of the win page, then print all information with reverse order with the reverse_iterator.
+ */
 void Direct::printWinpath(set<Page> & input)const{
 	vector<Page>::const_iterator pageIt = pages.begin();
 	unsigned pageNum;
@@ -241,14 +260,27 @@ void Direct::printWinpath(set<Page> & input)const{
 					winNum = pageNum;
 					naviNum = (*pageIt).getNaviNum();
 					choiceNum = (*pageIt).getChoiceNum();
-					//cout<<"Page "<<pageNum<<" WIN"<<endl;
+					vector<string> winPath;
+					stringstream ss;
+					string str;
+					ss<<"Page "<<winNum<<" WIN";
+					str=ss.str();
+					winPath.push_back(str);
 					while(pageNum!=1){
-						cout<<"Page "<<naviNum<<" Choice "<<choiceNum<<endl;
+						str = "";
+						ss.str("");
+						ss<<"Page "<<naviNum<<" Choice "<<choiceNum;
+						str = ss.str();
+						winPath.push_back(str);
 						pageNum = naviNum;
 						naviNum = pages[pageNum-1].getNaviNum();
 						choiceNum = pages[pageNum-1].getChoiceNum();
 					}
-					cout<<"Page "<<winNum<<" WIN"<<endl;
+					vector<string>::const_reverse_iterator it = winPath.rbegin();
+					while(it!=winPath.rend()){
+						cout<<*it<<endl;
+						++it;
+					}
 					return;
 				}
 				

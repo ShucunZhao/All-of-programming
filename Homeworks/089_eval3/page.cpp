@@ -6,26 +6,25 @@
 
 using namespace std;
 
+/*
+ * @param filename: the input argument that represent the file name.
+ * return bool: 1 when successful, 2 when fail.
+ * This func is used for reading each input file into a Page format.
+ */
 bool Page::readPage(char * filename){
 	bool check = 0;
-	//bool lose = 0;
-	//bool win = 0;
-	bool begin = 1;
-	//cout<<filename<<endl;
+	bool begin = 1;//Check to read the beginning of file.
 	string loseFlag("LOSE");
 	string winFlag("WIN");
-	//string blank("\n");
-	ifstream f(filename);
-	if(!f){
+	ifstream f(filename);//Open file.
+	if(!f){//if file cannot open return false.
 		return 0;
-		//exit(EXIT_FAILURE);
 	}
-	string str;
-	//vector<string> text;
-	//string temp;
-	int i = 1;
-	while(getline(f,str)){
-		if(begin){
+	string str;//Store all content in whole page.
+	int i = 1;//The choices index.
+	while(getline(f,str)){//Read all content.
+		if(begin){//When read the begin, check
+				//if there win or lose exits.
 			if(str==loseFlag){
 				content.first = 1;
 			}
@@ -34,22 +33,18 @@ bool Page::readPage(char * filename){
 			}
 			begin = 0;
 		}
+		//If isn't win or lose page at beginning, parsing the choices.
 		if(str[0]!='#'&&!check){
 			if(content.first==0){
+				//Generate the options of chices with index 'i'.
 				stringstream ss;
 				ss<<i;
 				string opt = " "+ss.str()+". ";
-				//cout<<str.substr(str.find(":"));
 				opt.insert(opt.size(), str.substr(str.find(":")+1));
 				ss.str("");
+				//Write the option into the Choice vecotr.
 				Choice c;
-				//string jump = str.substr(0,str.find(":"));
 				c.jump = stoi(str.substr(0,str.find(":")));
-				/*
-				cout<<"----------"<<endl;
-				cout<<text.second.first<<endl;
-				cout<<"----------"<<endl;
-				*/
 				c.option=opt;
 				c.index = i;
 				choices.push_back(c);
@@ -63,13 +58,17 @@ bool Page::readPage(char * filename){
 			}
 		}
 		if(check){
-			content.second.push_back(str);
+			content.second.push_back(str);//Write the parsed content into vector. 
 		}
 	}
 	f.close();
 	return 1;
 }
 
+/*
+ * return void
+ * This func is print the Page following the selection content.
+ */
 void Page::printPage()const{
 	vector<string>::const_iterator it = content.second.begin();
 	while(it!=content.second.end()){
@@ -89,6 +88,10 @@ void Page::printPage()const{
 	}
 }
 
+/*
+ * return void
+ * This func is print the options of Choice.
+ */
 void Page::printChoice()const{
 	cout<<endl;//blank line
 	vector<Choice>::const_iterator it = choices.begin();
@@ -97,16 +100,6 @@ void Page::printChoice()const{
 		++it;
 	}
 }
-
-/*
-void Choice::getIndex() const{
-	return index;
-}
-
-void Choice::getJump() const{
-	return jump;
-}
-*/
 
 void Page::setPageNum(unsigned num){
 	pageNum = num;
@@ -131,7 +124,7 @@ bool Page::isEndpage() const{
 }
 
 bool Page::operator<(const Page & rhs)const{
-	return this->pageNum<rhs.pageNum;//Key point for sorting in Set when inserting new element in it.
+	return this->pageNum<rhs.pageNum;//Key point for sorting in Set when inserting new element in it.(Because the STL set didn't overload the custom variable like the class we declared, so u need overload the "<" by yourself.)
 }
 
 void Page::setNaviNum(unsigned num){
