@@ -1,7 +1,19 @@
+#ifndef __DOUBLELINKEDLIST_H__
+#define __DOUBLELINKEDLIST_H__
 #include <cstdlib>
 #include <iostream>
+#include <exception>
 
 using namespace std;
+
+
+class indexException : public exception{
+public:
+	virtual const char * what()const throw(){
+		return "Index is valid!\n";
+	}
+}; 
+
 
 template<typename T>
 class DoubleLinkedList{
@@ -72,8 +84,7 @@ public:
 		}
 		size++;
 	}
-	void addBack(T & data){
-		
+	void addBack(T & data){	
 		tail = new Node(data,tail, NULL);
 		if(head==NULL){
 			head = tail;
@@ -81,18 +92,6 @@ public:
 		else{
 			tail->prev->next = tail;
 		}
-		
-		/*
-		Node * node = new Node(data,tail,NULL);
-		if(size==0){
-			head = node;
-			tail = node;
-		}
-		else{
-			tail->next = node;
-			tail = node;
-		}
-		*/
 		size++;
 	}
 	void printData() const{
@@ -106,6 +105,9 @@ public:
 		return this->size;
 	}
 	T & operator[](size_t index){
+		if(index<0||index>size-1){
+			throw indexException();
+		}
 		if(index==0){
 			return head->data;
 		}
@@ -121,6 +123,11 @@ public:
 		}
 	}
 	T & operator[](size_t index)const{
+		
+		if(index<0||index>size-1){
+			throw indexException();
+		}
+		
 		if(index==0){
 			return head->data;
 		}
@@ -136,3 +143,5 @@ public:
 		}
 	}
 };
+
+#endif

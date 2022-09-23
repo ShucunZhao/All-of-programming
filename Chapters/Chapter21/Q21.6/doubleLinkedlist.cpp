@@ -27,5 +27,7 @@ int main(int argc, char ** argv){
 	cout<<"L3[0]:"<<L3[0]<<endl;
 	cout<<"L3[9]:"<<L3[9]<<endl;
 	cout<<"L3[3]:"<<L3[3]<<endl;
+	//cout<<"L3[100]:"<<L3[100]<<endl;
+	//cout<<"L3[-3]:"<<L3[-3]<<endl;
 	return EXIT_SUCCESS;
 }
