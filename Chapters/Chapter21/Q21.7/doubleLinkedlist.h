@@ -93,6 +93,7 @@ public:
 		}
 		size++;
 	}
+	
 	void printData() const{
 		Node * temp = head;
 		while(temp!=NULL){

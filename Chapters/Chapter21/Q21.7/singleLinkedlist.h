@@ -85,11 +85,11 @@ public:
 		//should use pointer point to the pointer to change the value of address rather than 
 		//the real value!
 		Node ** cur = &head;
-		if(cur==NULL){
-			return 0;
-		}
-		while((*cur)->data!=data){
+		while((*cur)!=NULL&&(*cur)->data!=data){
 			cur = &(*cur)->next;
+		}
+		if((*cur)==NULL){
+			return 0;
 		}
 		Node * temp = *cur;
 		if((*cur)->next==NULL){

@@ -25,13 +25,15 @@ int main(int argc, char ** argv){
 	L3.remove(3);
 	cout<<"New size of L3 is:"<<L3.getSize()<<endl;
 	cout<<"New L3[3]:"<<L3[3]<<endl;
-	if(L2.removeByP(3)){
-		cout<<"Remove index 3 of L2 successfully."<<endl;
+	//int removeData = 100;
+	int removeData = 3;
+	if(L2.removeByP(removeData)){
+		cout<<"Remove data "<<removeData<<" of L2 successfully."<<endl;
 		cout<<"New size of L2 is:"<<L2.getSize()<<endl;
 		cout<<"New L2[3]:"<<L2[3]<<endl;
 	}
 	else{
-		cout<<"Cannot remove index 3 of L2."<<endl;
+		cout<<"Cannot remove data "<<removeData<<" of L2."<<endl;
 	}
 	return EXIT_SUCCESS;
 }
