@@ -17,15 +17,13 @@
 #  all: for one-by-one compile
 #---------------version 6---------------
 
-PROGS=doubleLinkedlist singleLinkedlist
-OBJS=doubleLinkedlist.o singleLinkedlist.o
+PROGS=doubleLinkedlist
+OBJS=doubleLinkedlist.o
 CC=g++
 CFLAGS=-std=gnu++11 -pedantic -Wall -Werror -ggdb3
 
 all: $(PROGS)
 doubleLinkedlist: doubleLinkedlist.o
-	$(CC) $^ $(CFLAGS) -o $@
-singleLinkedlist: singleLinkedlist.o
 	$(CC) $^ $(CFLAGS) -o $@
 
 %.o: %.cpp

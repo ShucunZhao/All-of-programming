@@ -94,6 +94,43 @@ public:
 		size++;
 	}
 	
+	bool remove(T & data){
+		Node ** cur = &head;
+		while((*cur)!=NULL&&(*cur)->data!=data){
+			cur = &(*cur)->next;
+		}
+		if((*cur)==NULL){
+			return 0;
+		}
+		Node * temp = *cur;
+		if((*cur)->next==NULL){
+			tail = (*cur)->prev;
+			*cur = NULL;	
+		}
+		else{
+			*cur = (*cur)->next;
+		}
+		delete temp;
+		size--;
+		return 1;
+	}
+
+	int find(const T & data)const{
+		if(head==NULL){
+			return -1;
+		}
+		int i=0;
+		Node * cur = head;
+		while(cur!=NULL&&cur->data!=data){
+			cur = cur->next;
+			i++;
+		}
+		if(cur==NULL){
+			return -1;
+		}
+		return i;
+	}
+
 	void printData() const{
 		Node * temp = head;
 		while(temp!=NULL){
@@ -141,6 +178,13 @@ public:
 			}
 			return temp->data;
 		}
+	}
+	
+	T & getHead()const{
+		return head->data;
+	}
+	T & getTail()const{
+		return tail->data;
 	}
 };
 
