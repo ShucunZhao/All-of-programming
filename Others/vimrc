@@ -61,7 +61,7 @@ vmap <C-c> "+y
 map <Space> :call gdb("")<cr>
 "Conflicting key changging:(Core step! or your gdb key would confict!)
 "In normal/visual mode: Set the s to j(which is move-down) then would release the confict with s(step) in gdb debugging."
-nnoremap s j
+noremap s j
 
 "比较文件  
 "nnoremap <C-F2> :vert diffsplit 
